@@ -50,19 +50,19 @@ Cell viability $= 1 - D$. The Hill function $f$ creates a sigmoidal concentratio
 ### Forward Model
 
 ![PK concentration profiles](figs/pk_concentration_profiles.png)
->C₁ and $C_2$ over 48 h; inset shows Radau solver vs. analytical solution error < 10⁻⁶, confirming solver accuracy.
+$C_1$ and $C_2$ over 48 h; inset shows Radau solver vs. analytical solution error < 10⁻⁶, confirming solver accuracy.
 
 ![Hill function](figs/hill_function.png)
->Hill curves for $n$ ∈ {1, 2, 4, 8, 12, 24}: steeper sigmoidal transitions with increasing n, all anchored at $EC_{50}$ = 15 mg/L.
+Hill curves for $n$ ∈ {1, 2, 4, 8, 12, 24}: steeper sigmoidal transitions with increasing n, all anchored at $EC_{50}$ = 15 mg/L.
 
 ![Coupled system](figs/coupled_system.png)
->Coupled PK-tox trajectories. Viability reaches a minimum near the $C_2$ peak (~3–4 h) then recovers as elimination reduces drug load. Monolithic and sequential solvers agree to within 2×10⁻⁴ since this is a one-way system. In a two way system, one where $C_1$ and $C_2$ are dependent on $D$, we would expect the two methods to differ.
+Coupled PK-tox trajectories. Viability reaches a minimum near the $C_2$ peak (~3–4 h) then recovers as elimination reduces drug load. Monolithic and sequential solvers agree to within 2×10⁻⁴ since this is a one-way system. In a two way system, one where $C_1$ and $C_2$ are dependent on $D$, we would expect the two methods to differ.
 
 ### Inverse Problem — Optimisation
 
 #### Generating Synthetic Data
 ![Synthetic data](figs/synthetic_data.png)
-45 synthetic observations (15 time points × 3 outputs $C_1$, $C_2$ and $V$): added 5% relative noise on C₁ and $C_2$ and 3% absolute noise on viability.
+45 synthetic observations (15 time points × 3 outputs $C_1$, $C_2$ and $V$): added 5% relative noise on $C_1$ and $C_2$ and 3% absolute noise on viability.
 
 #### Parameter Estimation
 Parameters were estimated in log-space (log θ) to enforce positivity and regularise scale differences. The objective is the weighted sum of squared residuals:
@@ -77,30 +77,30 @@ $$J(\boldsymbol{\theta}) = \sum_{i=1}^{45}\left(\frac{y_i^\text{obs} - y_i^\text
 | Differential Evolution | — | — | Slow | Robust global search |
 | Multi-start (n=20) | — | — | Moderate | Most random starts trapped in local minima |
 
->The loss landscape is strongly non-convex with **multiple basins of attraction**, not just a single local minimum. The root cause is parameter compensation: $EC_{50}$ and $n$ are nearly interchangeable (ρ ≈ 0.95), and $k_{damage}$ and $k_repair$ trade off (ρ ≈ 0.90), creating families of parameter sets that produce indistinguishable observations (see landscape plot below). This means multi-start's ~50% success rate is not just unlucky initialisation—it reflects a genuinely multi-modal objective.
+The loss landscape is strongly non-convex with **multiple basins of attraction**, not just a single local minimum. The root cause is parameter compensation: $EC_{50}$ and $n$ are nearly interchangeable (ρ ≈ 0.95), and $k_{damage}$ and $k_repair$ trade off (ρ ≈ 0.90), creating families of parameter sets that produce indistinguishable observations (see landscape plot below). This means multi-start's ~50% success rate is not just unlucky initialisation—it reflects a genuinely multi-modal objective.
 
->**Best practice**: use Differential Evolution for global exploration, then polish the best result with L-BFGS-B or Levenberg–Marquardt.
+**Best practice**: use Differential Evolution for global exploration, then polish the best result with L-BFGS-B or Levenberg–Marquardt.
 
 ### Loss Landscape
 
 ![Loss landscape](figs/loss_landscape.png)
->2D slices at the true parameter values. Left: log $k_{12}$ vs log $k_{21}$ — an elongated valley reflecting mass-conservation trade-offs (ρ = 0.89). Right: log $EC_{50}$ vs log $n$ — nearly flat ridge (ρ = −0.91), revealing that the Hill curve shape can be replicated by compensating pairs.
+2D slices at the true parameter values. Left: log $k_{12}$ vs log $k_{21}$ — an elongated valley reflecting mass-conservation trade-offs (ρ = 0.89). Right: log $EC_{50}$ vs log $n$ — nearly flat ridge (ρ = −0.91), revealing that the Hill curve shape can be replicated by compensating pairs.
 
 ### Sensitivity Analysis
 
 ![Jacobian sensitivity](figs/jacobian_sensitivity.png)
-> Local Jacobian |∂r/∂θ|: C₁ and $C_2$ are sensitive only to $k_{12}$, $k_{21}$, and $k_e$ — the PK parameters that compose their ODEs. $k_e$ dominates C₁ at late times (terminal elimination slope). $C_2$ is approximately equally influenced by all three PK parameters, with sensitivity growing at later times. Viability is weakly sensitive to all seven parameters: directly through $k_{damage}$, $k_{repair}$, $EC_{50}$, and $n$, and indirectly through $k_{12}$, $k_{21}$, and $k_e$ via their effect on the $C_2$ input to the damage equation.
+ Local Jacobian |∂r/∂θ|: $C_1$ and $C_2$ are sensitive only to $k_{12}$, $k_{21}$, and $k_e$ — the PK parameters that compose their ODEs. $k_e$ dominates $C_1$ at late times (terminal elimination slope). $C_2$ is approximately equally influenced by all three PK parameters, with sensitivity growing at later times. Viability is weakly sensitive to all seven parameters: directly through $k_{damage}$, $k_{repair}$, $EC_{50}$, and $n$, and indirectly through $k_{12}$, $k_{21}$, and $k_e$ via their effect on the $C_2$ input to the damage equation.
 
 ![Morris screening](figs/morris_screening.png)
-> Morris μ\*–σ plot: all parameters have significant mean effect (μ\*) and interaction (σ), confirming a highly non-linear landscape throughout parameter space. $k_{repair}$ is the most influential and $k_e$ the most correlated (highest σ/μ\* ratio). $k_{12}$ and $EC_{50}$ have the lowest overall influence and are the **safest candidates to fix at approximate literature values**, reducing dimensionality with minimal accuracy loss. Future experiments should prioritise measurements that constrain $k_{repair}$ and $k_e$.
+ Morris μ\*–σ plot: all parameters have significant mean effect (μ\*) and interaction (σ), confirming a highly non-linear landscape throughout parameter space. $k_{repair}$ is the most influential and $k_e$ the most correlated (highest σ/μ\* ratio). $k_{12}$ and $EC_{50}$ have the lowest overall influence and are the **safest candidates to fix at approximate literature values**, reducing dimensionality with minimal accuracy loss. Future experiments should prioritise measurements that constrain $k_{repair}$ and $k_e$.
 
 ![Sobol indices](figs/sobol_indices.png)
->First-order ($S_{1}$) vs. total-order ($S_{t}$) Sobol indices. $S_{1}$ captures a parameter's isolated contribution to output variance; $S_{t}$ includes coupling effects, so $S_{t}$ − $S_{1}$ measures interaction-only influence. Points on the dashed $S_{1}$ = $S_{t}$ line have purely direct effects. Note: with only 50 samples (a computational choice for this exercise), confidence intervals are wide and the values should not be over-interpreted. Qualitatively: $k_{repair}$ is the dominant parameter (~24% individual contribution), consistent with Morris. $k_e$ has large coupling influence but negligible direct effect. $k_{12}$ and $EC_{50}$ have the lowest total influence, corroborating Morris — both are safe to fix in a reduced model.
+First-order ($S_{1}$) vs. total-order ($S_{t}$) Sobol indices. $S_{1}$ captures a parameter's isolated contribution to output variance; $S_{t}$ includes coupling effects, so $S_{t}$ − $S_{1}$ measures interaction-only influence. Points on the dashed $S_{1}$ = $S_{t}$ line have purely direct effects. Note: with only 50 samples (a computational choice for this exercise), confidence intervals are wide and the values should not be over-interpreted. Qualitatively: $k_{repair}$ is the dominant parameter (~24% individual contribution), consistent with Morris. $k_e$ has large coupling influence but negligible direct effect. $k_{12}$ and $EC_{50}$ have the lowest total influence, corroborating Morris — both are safe to fix in a reduced model.
 
 ### Identifiability — Fisher Information Matrix
 
 ![Parameter correlations](figs/parameter_correlations.png)
->FIM-derived correlation matrix. High correlation (positive or negative) means the model cannot distinguish between two parameters because they compensate for one another — these are the under-determined parameters. Three pairs exceed |ρ| = 0.89.
+FIM-derived correlation matrix. High correlation (positive or negative) means the model cannot distinguish between two parameters because they compensate for one another — these are the under-determined parameters. Three pairs exceed |ρ| = 0.89.
 
 | Parameter | CV (%) | Identifiable? | Notes |
 |-----------|:------:|:-------------:|-------|
@@ -112,9 +112,9 @@ $$J(\boldsymbol{\theta}) = \sum_{i=1}^{45}\left(\frac{y_i^\text{obs} - y_i^\text
 | $EC_{50}$ | >80 | **No** | Near-perfect collinearity with $k_\text{damage}$ and $n$ |
 | $n$ | >90 | **No** | Near-perfect collinearity with $k_\text{damage}$ and $EC_{50}$ |
 
->**Correlated pairs and their physical cause:**
->- **($k_{12}$, $k_{21}$) — ρ = 0.89**: both govern inter-compartment transfer and are coupled by mass conservation. Increasing $k_{12}$ can be partially offset by increasing $k_{21}$. *Fix*: denser sampling of the early $C_2$ rise to distinguish forward and back-transfer rates.
->- **(EC₅₀, k_damage, n) — |ρ| up to 0.99**: when $C \ll EC_{50}$, the Hill term simplifies to ${\approx}\,k_\text{damage}\,C^n / EC_{50}^n$, so the model fits the ratio $k_\text{damage}/EC_{50}^n$ rather than the three parameters individually. These three show the largest estimation errors. *Fix*: add observations at concentrations spanning the EC₅₀ to resolve the Hill function's steepness and midpoint independently.
+**Correlated pairs and their physical cause:**
+- **($k_{12}$, $k_{21}$) — ρ = 0.89**: both govern inter-compartment transfer and are coupled by mass conservation. Increasing $k_{12}$ can be partially offset by increasing $k_{21}$. *Fix*: denser sampling of the early $C_2$ rise to distinguish forward and back-transfer rates.
+- **(EC₅₀, k_damage, n) — |ρ| up to 0.99**: when $C \ll EC_{50}$, the Hill term simplifies to ${\approx}\,k_\text{damage}\,C^n / EC_{50}^n$, so the model fits the ratio $k_\text{damage}/EC_{50}^n$ rather than the three parameters individually. These three show the largest estimation errors. *Fix*: add observations at concentrations spanning the EC₅₀ to resolve the Hill function's steepness and midpoint independently.
 
 ### Machine Learning Surrogate Models
 
