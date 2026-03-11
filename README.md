@@ -35,9 +35,9 @@ Cell viability $= 1 - D$. The Hill function $f$ creates a sigmoidal concentratio
 
 | Parameter | Reference value | Meaning |
 |-----------|:-:|---------|
-| $k_{12}$ | 0.6 h⁻¹ | Transfer Rate: Central → peripheral transfer |
-| $k_{21}$ | 0.3 h⁻¹ | Transfer Rate: Peripheral → central back-transfer |
-| $k_e$ | 0.15 h⁻¹ | Transfer Rate: Elimination (hepatic/renal) |
+| $k_{12}$ | 0.6 h⁻¹ | Central → peripheral transfer rate|
+| $k_{21}$ | 0.3 h⁻¹ | Peripheral → central back-transfer rate |
+| $k_e$ | 0.15 h⁻¹ | Elimination (hepatic/renal) rate |
 | $k_\text{damage}$ | 2.0 h⁻¹ | Toxicity induction rate |
 | $k_\text{repair}$ | 0.1 h⁻¹ | Cell repair/recovery rate |
 | $EC_{50}$ | 15.0 mg/L | Concentration at half-maximal effect |
