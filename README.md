@@ -164,7 +164,7 @@ The lower MLP loss indicates that the MLP model is able to navigate the non-line
 | **Forward solver** | Finite-difference / spectral-element time-stepping | Implicit Runge–Kutta (Radau); optional sequential ODE split |
 | **Observations** | Seismograms/ultrasound (pressure / velocity time-series at receivers) | Concentration and viability at discrete blood-draw time points |
 | **Inversion scale** | O(10⁶–10⁹) spatial model parameters (velocity field, density) | 7 scalar rate/PD parameters |
-| **Optimisation technique** | Gradient-based (L-BFGS, Adam) via adjoint-state method | L-BFGS-B; Levenberg–Marquardt; Differential Evolution; multi-start |
+| **Optimisation technique** | Gradient-based (L-BFGS, Adam) via adjoint-state method | L-BFGS-B; Levenberg–Marquardt; Differential Evolution; multi-start; PSO |
 | **Gradient computation** | Adjoint PDE solve (same cost as forward) | Automatic differentiation or finite-difference Jacobian |
 | **Cause of ill-posedness** | Band-limited data (missing low frequencies), cycle-skipping, limited aperture, non-unique velocity–density trade-off | Parameter collinearity in Hill function ($EC_{50}$ – $n$ – $k_{damage}$); sparse temporal sampling at a single dose level |
 | **Under-determined parameters** | Short-wavelength (high-frequency) velocity heterogeneities; density when only pressure recorded | $EC_{50}$ and Hill coefficient $n$ (cannot be independently resolved from single-dose viability data) |
